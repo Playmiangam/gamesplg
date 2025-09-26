@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест работоспособности сайта</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .test-btn { background-color: #007bff; color: white; }
+        .reset-btn { background-color: #6c757d; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Тест работоспособности сайта</h1>
+    
+    <div class="test-section">
+        <h3>1. Базовая функциональность JavaScript</h3>
+        <button onclick="testJavaScript()" class="test-btn">Запустить тест</button>
+        <div id="js-test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Проверка CSS стилей</h3>
+        <div id="css-test" style="padding: 10px; margin: 10px 0;">
+            Этот текст должен быть стилизован
+        </div>
+        <button onclick="testCSS()" class="test-btn">Проверить CSS</button>
+        <div id="css-test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Тест взаимодействия с DOM</h3>
+        <button onclick="testDOM()" class="test-btn">Тест DOM</button>
+        <div id="dom-test-area">
+            <p>Изначальный текст</p>
+        </div>
+        <div id="dom-test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. Проверка работы с LocalStorage</h3>
+        <button onclick="testStorage()" class="test-btn">Тест хранилища</button>
+        <div id="storage-test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. Проверка даты и времени</h3>
+        <button onclick="testDateTime()" class="test-btn">Показать время</button>
+        <div id="datetime-test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>6. Комплексный тест</h3>
+        <button onclick="runAllTests()" class="test-btn">Запустить все тесты</button>
+        <button onclick="resetTests()" class="reset-btn">Сбросить тесты</button>
+        <div id="summary-result"></div>
+    </div>
+
+    <script>
+        function showResult(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<span class="status ${isSuccess ? 'success' : 'error'}">${message}</span>`;
+        }
+
+        function testJavaScript() {
+            try {
+                // Тест базовых операций
+                const a = 5, b = 3;
+                if (a + b === 8 && a * b === 15) {
+                    showResult('js-test-result', '✓ JavaScript работает корректно', true);
+                } else {
+                    throw new Error('Математические операции не работают');
+                }
+            } catch (error) {
+                showResult('js-test-result', '✗ Ошибка в JavaScript: ' + error.message, false);
+            }
+        }
+
+        function testCSS() {
+            const testElement = document.getElementById('css-test');
+            const styles = window.getComputedStyle(testElement);
+            
+            if (styles.padding === '10px' && styles.margin !== '0px') {
+                showResult('css-test-result', '✓ CSS стили применяются правильно', true);
+            } else {
+                showResult('css-test-result', '✗ Проблемы с применением CSS', false);
+            }
+        }
+
+        function testDOM() {
+            try {
+                const testArea = document.getElementById('dom-test-area');
+                const newElement = document.createElement('p');
+                newElement.textContent = 'Новый элемент добавлен успешно!';
+                newElement.style.color = 'green';
+                testArea.appendChild(newElement);
+                
+                showResult('dom-test-result', '✓ DOM операции работают корректно', true);
+            } catch (error) {
+                showResult('dom-test-result', '✗ Ошибка в DOM операциях', false);
+            }
+        }
+
+        function testStorage() {
+            try {
+                const testKey = 'website_test';
+                const testValue = 'Hello World ' + Date.now();
+                
+                localStorage.setItem(testKey, testValue);
+                const retrievedValue = localStorage.getItem(testKey);
+                
+                if (retrievedValue === testValue) {
+                    localStorage.removeItem(testKey);
+                    showResult('storage-test-result', '✓ LocalStorage работает корректно', true);
+                } else {
+                    showResult('storage-test-result', '✗ Ошибка в LocalStorage', false);
+                }
+            } catch (error) {
+                showResult('storage-test-result', '✗ LocalStorage недоступен', false);
+            }
+        }
+
+        function testDateTime() {
+            const now = new Date();
+            const resultElement = document.getElementById('datetime-test-result');
+            resultElement.innerHTML = `
+                <p><strong>Текущая дата и время:</strong> ${now.toLocaleString('ru-RU')}</p>
+                <p><strong>Timestamp:</strong> ${now.getTime()}</p>
+                <p><strong>Часовой пояс:</strong> ${Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+            `;
+        }
+
+        function runAllTests() {
+            testJavaScript();
+            setTimeout(testCSS, 500);
+            setTimeout(testDOM, 1000);
+            setTimeout(testStorage, 1500);
+            setTimeout(testDateTime, 2000);
+            
+            setTimeout(() => {
+                document.getElementById('summary-result').innerHTML = 
+                    '<span class="status success">✓ Все тесты завершены! Проверьте результаты выше.</span>';
+            }, 2500);
+        }
+
+        function resetTests() {
+            const resultElements = document.querySelectorAll('[id$="-result"], #dom-test-area');
+            resultElements.forEach(element => {
+                if (element.id === 'dom-test-area') {
+                    element.innerHTML = '<p>Изначальный текст</p>';
+                } else {
+                    element.innerHTML = '';
+                }
+            });
+        }
+
+        // Авто-тест при загрузке
+        window.onload = function() {
+            console.log('Страница загружена успешно');
+            document.body.style.backgroundColor = '#f0f8ff';
+        };
+    </script>
+</body>
+</html>
